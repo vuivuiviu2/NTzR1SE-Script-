@@ -1,0 +1,209 @@
+--============================--
+--        LOAD SPAWNER        --
+--============================--
+
+local spawner = loadstring(game:HttpGet(
+	"https://raw.githubusercontent.com/VoorPhale012/Fogroom/refs/heads/main/Wwwhyyyyil"
+))()
+
+-- KHAI BÁO SERVICE (FIX LỖI)
+local TweenService = game:GetService("TweenService")
+
+--============================--
+--        CREATE ENTITY       --
+--============================--
+
+local entity = spawner.Create({
+
+	Entity = {
+		Name = "Tổng gey",
+		Asset = "https://github.com/vuivuiviu2/NTZ/raw/refs/heads/main/NTZ.rbxm",
+		HeightOffset = 0
+	},
+
+	Lights = {
+		Flicker = { Enabled = true, Duration = 3 },
+		Shatter = true,
+		Repair = false
+	},
+
+	Earthquake = {
+		Enabled = true
+	},
+
+	CameraShake = {
+		Enabled = true,
+		Range = 100,
+		Values = {2, 40, 0.4, 1}
+	},
+
+	Movement = {
+		Speed = 200,
+		Delay = 6,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = true,
+		Type = "Blitz",
+		Min = 1,
+		Max = 1,
+		Delay = 0
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 123
+	},
+
+	Crucifixion = {
+		Enabled = true,
+		Range = 40,
+		Resist = false,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"Thử thôi nha",
+			"Chết là gà nha",
+            "é hehehehehehe",
+            "hehe"
+		},
+		Cause = "NTz Gaming"
+	}
+
+})
+
+--============================--
+--        AUDIO LOADER        --
+--============================--
+
+local function GitAud(url, name)
+	local fileName = name..".mp3"
+	if not isfile(fileName) then
+		writefile(fileName, game:HttpGet(url))
+	end
+	return (getcustomasset or getsynasset)(fileName)
+end
+
+local sound1
+local sound2
+local crucifixSound
+
+local function ResetLighting()
+	local cc = game.Lighting:FindFirstChild("MainColorCorrection")
+		or game.Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
+	if cc then
+		TweenService:Create(cc, TweenInfo.new(2), {
+			TintColor = Color3.fromRGB(255,255,255),
+			Contrast = 0
+		}):Play()
+	end
+end
+
+--============================--
+--          ON SPAWN          --
+--============================--
+
+entity:SetCallback("OnSpawned", function()
+	
+	-- Tìm model ngay và dọn dẹp luôn (không wait)
+	local model = workspace:FindFirstChild("Tổng gey")
+	if model then
+		for _, v in pairs(model:GetDescendants()) do
+			if v:IsA("Sound") then
+				v:Stop()
+				v:Destroy()
+			elseif v:IsA("ParticleEmitter") then
+				v.Transparency = NumberSequence.new(0)
+				v.LightEmission = 0
+			end
+		end
+	end
+
+	local cc = game.Lighting:FindFirstChild("MainColorCorrection")
+		or game.Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
+
+	if cc then
+		cc.TintColor = Color3.fromRGB(255, 255, 255)
+		cc.Contrast = 0
+		TweenService:Create(cc, TweenInfo.new(3), {
+			TintColor = Color3.fromRGB(255, 255, 255),
+			Contrast = 0
+		}):Play()
+	end
+
+	if not model then return end
+	local part = model:FindFirstChildWhichIsA("BasePart") or model
+
+	-- POINT LIGHT VÀNG
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(0, 191, 255)
+	light.Brightness = 6
+	light.Range = 20
+	light.Shadows = true
+	light.Parent = part
+
+	-- SOUND 1 (GITHUB)
+	sound1 = Instance.new("Sound")
+	sound1.Name = "GitHub_Sound1"
+	sound1.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/Lunacy-mode-entity-/raw/refs/heads/main/hehehehehehehe%20hehe_1_1%20cuoiquada.mp3",
+		"P1Nat"
+	)
+	sound1.Volume = 7
+	sound1.RollOffMaxDistance = 200
+	sound1.Looped = true
+	sound1.Parent = part
+	sound1:Play()
+
+	-- SOUND 2 (GITHUB)
+	sound2 = Instance.new("Sound")
+	sound2.Name = "GitHub_Sound2"
+	sound2.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/Lunacy-mode-entity-/raw/refs/heads/main/thuthoinha_1.mp3",
+		"NTzg"
+	)
+	sound2.Volume = 10
+	sound2.RollOffMaxDistance = 500
+	sound2.Looped = true
+	sound2.Parent = part
+	sound2:Play()
+
+	-- CRUCIFIX SOUND
+	model:GetAttributeChangedSignal("BeingBanished"):Connect(function()
+		if model:GetAttribute("BeingBanished") == true then
+			if sound1 then sound1:Stop() end
+			if sound2 then sound2:Stop() end
+			ResetLighting()
+			crucifixSound = Instance.new("Sound")
+			crucifixSound.SoundId = GitAud(
+				"https://github.com/vuivuiviu2/Deliria-Mode-Entity-/raw/refs/heads/main/NTz%20thanhgia.mp3",
+				"tongthanhgiahaha"
+			)
+			crucifixSound.Volume = 6
+			crucifixSound.Parent = workspace
+			crucifixSound:Play()
+		end
+	end)
+end)
+
+--============================--
+--          CLEANUP           --
+--============================--
+
+entity:SetCallback("OnDespawned", function()
+	if sound1 then sound1:Destroy() end
+	if sound2 then sound2:Destroy() end
+	if crucifixSound then crucifixSound:Destroy() end
+	ResetLighting()
+end)
+
+--============================--
+--            RUN             --
+--============================--
+
+entity:Run()
