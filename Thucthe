@@ -1,0 +1,106 @@
+--====================================================--
+--      DỰ ÁN NIGHTMARE MODE V3.1 - FIX NẠP RÚH       --
+--====================================================--
+
+local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LatestRoom = ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom")
+local Camera = workspace.CurrentCamera
+local Player = Players.LocalPlayer
+
+-- HÀM HỖ TRỢ TẢI ÂM THANH
+local function getGitSoundId(url, name)
+    local fileName = name..".mp3"
+    if not isfile(fileName) then writefile(fileName, game:HttpGet(url)) end
+    return (getcustomasset or getsynasset)(fileName)
+end
+
+--====================================================--
+-- [1] NẠP SCRIPT RUSH (CHỈ NẠP 1 LẦN ĐỂ NÓ TỰ ĐỘNG CHẠY)
+--====================================================--
+task.spawn(function()
+    print("⏳ Đang nạp Script Rush tự động...")
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/R%C3%BAh"))()
+    end)
+    if success then print("✅ Script Rush đã sẵn sàng và đang chạy ngầm!") else warn("❌ Lỗi nạp Rush: " .. err) end
+end)
+
+--====================================================--
+-- [2] PURPLE GUIDING LIGHT & DEATH UI
+--====================================================--
+_G.DO_RED_GUY = true 
+local PurpleColor = Color3.fromRGB(160, 32, 240) 
+
+Camera.ChildAdded:Connect(function(Child)
+    if Child.Name ~= "DeathBackgroundBlue" or not _G.DO_RED_GUY then return end
+    
+    pcall(function()
+        local DeathUI = Player.PlayerGui.MainUI.Death
+        DeathUI.HelpfulDialogue.TextColor3 = PurpleColor
+        
+        local MusicFolder = Player.PlayerGui.MainUI.Initiator.Main_Game.Health.Music
+        for _, Asset in MusicFolder:GetChildren() do if Asset:IsA("Sound") then Asset:Destroy() end end
+        
+        local CustomMusic = Instance.new("Sound")
+        CustomMusic.SoundId = getGitSoundId("https://github.com/vuivuiviu2/Deliria-Mode-Entity-/raw/refs/heads/main/Okentz%20Phonk%20.mp3", "PurpleTensionV2noo")
+        CustomMusic.Parent = SoundService
+        CustomMusic.Looped = true
+        CustomMusic.Volume = 2.5
+        CustomMusic:Play()
+
+        local Moon = Child.Lights.BigLight.Attachment.Moon
+        Moon.Texture = "rbxassetid://96255883946638"
+        if Moon:IsA("ImageLabel") or Moon:IsA("BillboardGui") then Moon.Size = UDim2.new(10, 0, 10, 0) end
+    end)
+end)
+
+--====================================================--
+-- [3] CÁC THỰC THỂ THEO THỜI GIAN
+--====================================================--
+
+-- 1. Huy Trần v1 (40s - Spawn liên tục)
+coroutine.wrap(function()
+    while true do task.wait(40) pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Huy%20Tr%E1%BA%A7n%20shocker"))() end) end
+end)()
+
+-- 2. NTzv2 (135s - Đợi cửa)
+coroutine.wrap(function()
+    while true do task.wait(135) LatestRoom.Changed:Wait() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Ntzv2"))() end) end
+end)()
+
+-- 3. Huy Trần v3/Bruh (222s - Đợi cửa)
+coroutine.wrap(function()
+    while true do task.wait(222) LatestRoom.Changed:Wait() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Huy%20Tr%E1%BA%A7n%20ng%E1%BB%A7%20ngu%20ch%E1%BA%BFt%20m%E1%BA%B9%20h%E1%BA%BFt%20ngu"))() end) end
+end)()
+
+-- 4. Huy Trần v2 (300s - Đợi cửa)
+coroutine.wrap(function()
+    while true do task.wait(300) LatestRoom.Changed:Wait() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Huy%20Tr%E1%BA%A7n%20CLM"))() end) end
+end)()
+
+-- 5. Pinkie (387s - Đợi cửa)
+coroutine.wrap(function()
+    while true do task.wait(387) LatestRoom.Changed:Wait() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/Pinkie"))() end) end
+end)()
+
+-- 6. Boss NTz R1se (444s - 2 lần)
+coroutine.wrap(function()
+    for i = 1, 2 do task.wait(444) LatestRoom.Changed:Wait() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/NTZrise"))() end) end
+end)()
+
+-- 7. Chain (500s - Đợi cửa)
+coroutine.wrap(function()
+    while true do task.wait(500) LatestRoom.Changed:Wait() pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/NTzchain"))() end) end
+end)()
+
+-- 8. A-60 (Roll 1/80 mỗi khi mở cửa)
+coroutine.wrap(function()
+    local rng = Random.new(tonumber(game.JobId:gsub("%D+", ""):sub(1,9)) or os.time())
+    LatestRoom.Changed:Connect(function()
+        if rng:NextInteger(1, 80) == 1 then pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/60"))() end) end
+    end)
+end)()
+
+print("✅ Đã kích hoạt Nightmare Mode! Rush đã được nạp tự động.")
