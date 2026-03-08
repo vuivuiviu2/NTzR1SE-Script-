@@ -1,0 +1,250 @@
+--============================--
+--        LOAD SPAWNER        --
+--============================--
+
+local spawner = loadstring(game:HttpGet(
+	"https://raw.githubusercontent.com/VoorPhale012/Fogroom/refs/heads/main/Wwwhyyyyil"
+))()
+
+--============================--
+--        CREATE ENTITY       --
+--============================--
+
+local entity = spawner.Create({
+
+	Entity = {
+		Name = "Tổng gey", -- GIỮ NGUYÊN TÊN GỐC ĐỂ TRANH LỖI MODEL
+		Asset = "rbxassetid://128459542326576",
+		HeightOffset = 0
+	},
+
+	Lights = {
+		Flicker = { Enabled = true, Duration = 2.5 },
+		Shatter = false,
+		Repair = false
+	},
+
+	Earthquake = {
+		Enabled = false
+	},
+
+	CameraShake = {
+		Enabled = true,
+		Range = 100,
+		Values = {2, 40, 0.4, 1}
+	},
+
+	Movement = {
+		Speed = 50,
+		Delay = 8,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = false,
+		Type = "Ambush",
+		Min = 1,
+		Max = 1,
+		Delay = 0.5
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 100
+	},
+
+	Crucifixion = {
+		Enabled = true,
+		Range = 40,
+		Resist = false,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"Tôi không nghiện hút thuốc",
+			"Thuốc lá có hại cho sức khỏe, đề nghị anh em không hút thuốc lá",
+			".",
+			"."
+		},
+		Cause = "Ntz Variant-C" -- Tên hiện ra khi bro bị oẳng
+	}
+
+})
+
+--============================--
+--        AUDIO LOADER        --
+--============================--
+
+local function GitAud(url, name)
+	local fileName = name..".mp3"
+	if not isfile(fileName) then
+		writefile(fileName, game:HttpGet(url))
+	end
+	return (getcustomasset or getsynasset)(fileName)
+end
+
+local sound1
+local sound2
+local spawnSound
+local crucifixSound
+local soundLoop
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local function ResetLighting()
+	local cc = game.Lighting:FindFirstChild("MainColorCorrection")
+		or game.Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
+	if cc then
+		TweenService:Create(cc, TweenInfo.new(2), {
+			TintColor = Color3.fromRGB(255,255,255),
+			Contrast = 0
+		}):Play()
+	end
+end
+
+--============================--
+--          ON SPAWN          --
+--============================--
+
+entity:SetCallback("OnSpawned", function()
+	
+	-- 1. PHÁT ÂM THANH XUẤT HIỆN
+	spawnSound = Instance.new("Sound")
+	spawnSound.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/Pressure-/raw/refs/heads/main/1hoitinhthan.mp3",
+		"SpawnHoiTinhThan"
+	)
+	spawnSound.Volume = 5
+	spawnSound.Parent = game.SoundService 
+	spawnSound:Play()
+	
+	-- 2. TWEEN MÀN HÌNH (4.9 GIÂY)
+	task.delay(4.9, function()
+		local cc = game.Lighting:FindFirstChild("MainColorCorrection")
+			or game.Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
+
+		if cc then
+			cc.TintColor = Color3.fromRGB(0, 200, 0)
+			cc.Contrast = 1
+			TweenService:Create(cc, TweenInfo.new(3), {
+				TintColor = Color3.fromRGB(255, 255, 255),
+				Contrast = 0
+			}):Play()
+		end
+	end)
+
+	task.wait(1)
+
+	-- Tìm đúng tên model "Tổng gey"
+	local model = workspace:FindFirstChild("Tổng gey")
+	if not model then 
+		warn("KHÔNG TÌM THẤY MODEL THỰC THỂ!") -- Báo lỗi vào F9 nếu không tìm thấy
+		return 
+	end
+	local part = model:FindFirstChildWhichIsA("BasePart") or model
+
+	--============================--
+	--      FIX PARTICLE         --
+	--============================--
+
+	for _, v in pairs(model:GetDescendants()) do
+		if v:IsA("ParticleEmitter") then
+			v.Transparency = NumberSequence.new(0)
+			v.LightEmission = 0
+		end
+	end
+
+	--============================--
+	--        SOUND 1            --
+	--============================--
+
+	sound1 = Instance.new("Sound")
+	sound1.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/NTZ/raw/refs/heads/main/hutthuoccohaichosuckhoeaekonenhutthiocla_1_1.mp3",
+		"P1hutthuoccohainha"
+	)
+	sound1.Volume = 6
+	sound1.RollOffMaxDistance = 100 -- ĐÃ CHỈNH THÀNH 10
+	sound1.Looped = true
+	sound1.Parent = part
+	sound1:Play()
+
+	--============================--
+	--        SOUND 2            --
+	--============================--
+
+	sound2 = Instance.new("Sound")
+	sound2.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/NTZ/raw/refs/heads/main/tuikonghienhutthic_1.mp3",
+		"tuikongienthuila"
+	)
+	sound2.Volume = 3
+	sound2.RollOffMaxDistance = 350
+	sound2.Looped = true
+	sound2.Parent = part
+	sound2:Play()
+
+	--============================--
+	--   CHECK KHOẢNG CÁCH        --
+	--============================--
+	
+	local player = game.Players.LocalPlayer
+	soundLoop = RunService.RenderStepped:Connect(function()
+		if sound2 and sound2.Parent and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+			local distance = (part.Position - player.Character.HumanoidRootPart.Position).Magnitude
+			
+			if distance <= 100 then -- CHỈNH THÀNH 100M
+				sound2.Volume = 0
+			elseif distance >= 150 then
+				sound2.Volume = 3
+			end
+		end
+	end)
+
+	--============================--
+	--      CRUCIFIX SOUND       --
+	--============================--
+
+	model:GetAttributeChangedSignal("BeingBanished"):Connect(function()
+		if model:GetAttribute("BeingBanished") == true then
+			if sound1 then sound1:Stop() end
+			if sound2 then sound2:Stop() end
+			if spawnSound then spawnSound:Stop() end
+			if soundLoop then soundLoop:Disconnect() end
+
+			ResetLighting()
+
+			crucifixSound = Instance.new("Sound")
+			crucifixSound.SoundId = GitAud(
+				"https://github.com/vuivuiviu2/Pressure-/raw/refs/heads/main/ia1quan_1.mp3",
+				"Motquan"
+			)
+			crucifixSound.Volume = 6
+			crucifixSound.Parent = workspace
+			crucifixSound:Play()
+		end
+	end)
+
+end)
+
+--============================--
+--          CLEANUP           --
+--============================--
+
+entity:SetCallback("OnDespawned", function()
+	if sound1 then sound1:Destroy() end
+	if sound2 then sound2:Destroy() end
+	if spawnSound then spawnSound:Destroy() end
+	if crucifixSound then crucifixSound:Destroy() end
+	if soundLoop then soundLoop:Disconnect() end
+	ResetLighting()
+end)
+
+--============================--
+--            RUN             --
+--============================--
+
+entity:Run()
