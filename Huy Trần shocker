@@ -14,7 +14,7 @@ local ENTITY_NAME = "Huy Trần"
 local MODEL_ID = "rbxassetid://130483062188810"
 
 local DAMAGE = 50 -- 💀 Giết luôn
-local LOOK_TIME_REQUIRED = 0.5
+local LOOK_TIME_REQUIRED = 0.75
 local NOT_LOOK_TIME_REQUIRED = 1
 local SINK_SPEED = 25
 
