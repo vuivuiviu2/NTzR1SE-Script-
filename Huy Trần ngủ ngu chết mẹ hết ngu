@@ -1,0 +1,251 @@
+--============================--
+--        LOAD SPAWNER        --
+--============================--
+
+local spawner = loadstring(game:HttpGet(
+	"https://raw.githubusercontent.com/VoorPhale012/Fogroom/refs/heads/main/Wwwhyyyyil"
+))()
+
+--============================--
+--        CREATE ENTITY       --
+--============================--
+
+local entity = spawner.Create({
+
+	Entity = {
+		Name = "Bruh",
+		Asset = "rbxassetid://119601409567355",
+		HeightOffset = 0
+	},
+
+	Lights = {
+		Flicker = { Enabled = true, Duration = 2 },
+		Shatter = true,
+		Repair = false
+	},
+
+	Earthquake = { Enabled = false },
+
+	CameraShake = {
+		Enabled = true,
+		Range = 100,
+		Values = {2, 40, 0.4, 1}
+	},
+
+	Movement = {
+		Speed = 200,
+		Delay = 7,
+		Reversed = false
+	},
+
+	Rebounding = {
+		Enabled = true,
+		Type = "Ambush",
+		Min = 1,
+		Max = 1,
+		Delay = 0.5
+	},
+
+	Damage = {
+		Enabled = true,
+		Range = 40,
+		Amount = 123
+	},
+
+	Crucifixion = {
+		Enabled = true,
+		Range = 40,
+		Resist = false,
+		Break = true
+	},
+
+	Death = {
+		Type = "Guiding",
+		Hints = {
+			"Tui đẹp trai",
+			"Tui đẹp trai",
+			"Hú Hú",
+			"Hẹ Hẹ",
+			"Hú hú"
+		},
+		Cause = "Bruh"
+	}
+
+})
+
+--============================--
+--        AUDIO LOADER        --
+--============================--
+
+local function GitAud(url, name)
+	local fileName = name..".mp3"
+
+	if not isfile(fileName) then
+		writefile(fileName, game:HttpGet(url))
+	end
+
+	if getcustomasset then
+		return getcustomasset(fileName)
+	elseif getsynasset then
+		return getsynasset(fileName)
+	else
+		warn("Executor không hỗ trợ custom asset")
+		return nil
+	end
+end
+
+local sound1
+local sound2
+local spawnSound -- Âm thanh mới của ông
+local crucifixSound
+
+local TweenService = game:GetService("TweenService")
+local ContentProvider = game:GetService("ContentProvider")
+
+local function ResetLighting()
+	local cc = game.Lighting:FindFirstChild("MainColorCorrection")
+		or game.Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
+
+	if cc then
+		TweenService:Create(cc, TweenInfo.new(2), {
+			TintColor = Color3.fromRGB(255,255,255),
+			Contrast = 0
+		}):Play()
+	end
+end
+
+--============================--
+--          ON SPAWN          --
+--============================--
+
+entity:SetCallback("OnSpawned", function()
+
+	local cc = game.Lighting:FindFirstChild("MainColorCorrection")
+		or game.Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
+
+	if cc then
+		cc.TintColor = Color3.fromRGB(28, 44, 82)
+		cc.Contrast = 0.5
+
+		TweenService:Create(cc, TweenInfo.new(3), {
+			TintColor = Color3.fromRGB(255,255,255),
+			Contrast = 0
+		}):Play()
+	end
+
+	task.wait(0.2)
+
+	local model = entity.Model
+	if not model then return end
+
+	local part = model:FindFirstChildWhichIsA("BasePart")
+	if not part then return end
+
+	--============================--
+	--       POINT LIGHT         --
+	--============================--
+
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(28, 44, 82)
+	light.Brightness = 1
+	light.Range = 15
+	light.Shadows = true
+	light.Parent = part
+
+	--============================--
+	--      NEW SPAWN AUDIO       --
+	--============================--
+
+	spawnSound = Instance.new("Sound")
+	spawnSound.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/Lunacy-mode-entity-/raw/refs/heads/main/fredchaferfrommedia-bruh-1-120133.mp3",
+		"fredchafer_spawn"
+	)
+	spawnSound.Volume = 10 -- Độ to âm thanh spawn
+	spawnSound.Parent = part
+
+	--============================--
+	--        SOUND 1            --
+	--============================--
+
+	sound1 = Instance.new("Sound")
+	sound1.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/Tension-Mode/raw/refs/heads/main/anh%20b%E1%BB%A7h%20deptrai%20fix%20lol%20getout_1.mp3",
+		"tuhxa_entity"
+	)
+	sound1.Volume = 1
+	sound1.Looped = true
+	sound1.RollOffMaxDistance = 400
+	sound1.RollOffMode = Enum.RollOffMode.Linear
+	sound1.Parent = part
+
+	--============================--
+	--        SOUND 2            --
+	--============================--
+
+	sound2 = Instance.new("Sound")
+	sound2.SoundId = GitAud(
+		"https://github.com/vuivuiviu2/Tension-Mode/raw/refs/heads/main/huhuhehehehe.mp3",
+		"tongganbuh_entityfix"
+	)
+	sound2.Volume = 10
+	sound2.Looped = true
+	sound2.RollOffMaxDistance = 150
+	sound2.RollOffMode = Enum.RollOffMode.Linear
+	sound2.Parent = part
+
+	-- Tải trước tất cả âm thanh
+	ContentProvider:PreloadAsync({spawnSound, sound1, sound2})
+	task.wait(0.2)
+
+	-- Bắt đầu phát
+	spawnSound:Play()
+	sound1:Play()
+	sound2:Play()
+
+	--============================--
+	--      CRUCIFIX SOUND       --
+	--============================--
+
+	model:GetAttributeChangedSignal("BeingBanished"):Connect(function()
+		if model:GetAttribute("BeingBanished") == true then
+			
+			if sound1 then sound1:Stop() end
+			if sound2 then sound2:Stop() end
+			if spawnSound then spawnSound:Stop() end
+
+			ResetLighting()
+
+			crucifixSound = Instance.new("Sound")
+			crucifixSound.SoundId = GitAud(
+				"https://github.com/vuivuiviu2/Tension-Mode/raw/refs/heads/main/a%20a%20a%20a%20a_1.mp3",
+				"tongthanhgia_entityyy"
+			)
+			crucifixSound.Volume = 6
+			crucifixSound.Parent = workspace
+
+			ContentProvider:PreloadAsync({crucifixSound})
+			task.wait(0.1)
+			crucifixSound:Play()
+		end
+	end)
+
+end)
+
+--============================--
+--          CLEANUP           --
+--============================--
+
+entity:SetCallback("OnDespawned", function()
+	if sound1 then sound1:Destroy() end
+	if sound2 then sound2:Destroy() end
+	if spawnSound then spawnSound:Destroy() end
+	if crucifixSound then crucifixSound:Destroy() end
+	ResetLighting()
+end)
+
+--============================--
+--            RUN             --
+--============================--
+
+entity:Run()
