@@ -1,0 +1,74 @@
+local _0x_G = game
+local _0x_L = _0x_G:GetService("Lighting")
+local _0x_P = _0x_G:GetService("Players").LocalPlayer
+
+_0x_L.FogColor = Color3.fromRGB(255, 255, 255)
+_0x_L.FogStart = 1e5
+_0x_L.FogEnd = 1e5
+
+local function _0x_D(data)
+    local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
+        return r;
+    end):gsub('%d%d%d%d%d%d%d%d', function(x)
+        return string.char(tonumber(x,2))
+    end))
+end
+
+local _STRS = {
+    ["U1"] = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3Z1aXZ1aXZpdTIvTlR6UjFTRS1TY3JpcHQtL3JlZnMvaGVhZHMvbWFpbi9UaHVjdGhl",
+    ["U2"] = "aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3Z1aXZ1aXZpdTIvTlRaL3JlZnMvaGVhZHMvbWFpbi9WdWkudHh0",
+    ["C1"] = "TlR6IE5pZ2h0bWFyZSBNb2RlIExvYWRlZCBTdWNjZXNzZnVsbHku",
+    ["C2"] = "TlR6OiBUaGFua3MgZm9yIHBsYXlpbmcgTlR6IE5pZ2h0bWFyZSBNb2Rl",
+    ["S1"] = "NTz Nightmare Mode 💀👍" 
+}
+
+local _0x_M = _0x_P.PlayerGui:WaitForChild("MainUI", 10):WaitForChild("Initiator", 10):FindFirstChild("Main_Game")
+local _0x_C = _0x_G:GetService("TextChatService").TextChannels:FindFirstChild("RBXGeneral")
+
+local function _0x_Notify(cap, msg)
+    if _0x_M then
+        local s, m = pcall(require, _0x_M)
+        if s and m and m.caption then
+            m.caption("<font color='#8A2BE2'>"..cap.."</font>", true)
+        end
+    end
+    if _0x_C then
+        _0x_C:DisplaySystemMessage("<font color='#8A2BE2'>"..msg.."</font>")
+    end
+end
+
+local _0x_Executed = false
+local function _0x_Start()
+    if _0x_Executed then return end
+    _0x_Executed = true
+
+    pcall(function()
+        loadstring(_0x_G:HttpGet(_0x_D(_STRS["U1"])))()
+        _0x_Notify(_STRS["S1"], _STRS["S1"])
+    end)
+
+    pcall(function()
+        loadstring(_0x_G:HttpGet(_0x_D(_STRS["U2"])))()
+    end)
+end
+
+_0x_Notify(_0x_D(_STRS["C1"]), _0x_D(_STRS["C2"]))
+task.wait(5)
+_0x_Notify("have fun:>", "NTz: Tài gey")
+
+local _0x_Data = _0x_G.ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom")
+
+if _0x_Data.Value >= 1 then
+    _0x_Start()
+end
+
+_0x_Data.Changed:Connect(function(val)
+    if val >= 1 then
+        _0x_Start()
+    end
+end)
