@@ -1,0 +1,113 @@
+--====================================================--
+--      DỰ ÁN NIGHTMARE MODE V3.1 - GHOST VERSION     --
+--====================================================--
+
+local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LatestRoom = ReplicatedStorage:WaitForChild("GameData"):WaitForChild("LatestRoom")
+local Camera = workspace.CurrentCamera
+local Player = Players.LocalPlayer
+
+-- [0] ĐỒNG BỘ HÓA & HIỂN THỊ SEED DUY NHẤT
+local seed = tonumber(game.JobId:gsub("%D+", ""):sub(1, 9)) or os.time()
+local rng = Random.new(seed)
+
+print("================================")
+print("🆔 SEED: " .. tostring(seed))
+print("NTz siêu đẹp trai")
+print("================================")
+
+-- HÀM HỖ TRỢ
+local function getGitSoundId(url, name)
+    local fileName = name..".mp3"
+    if not isfile(fileName) then writefile(fileName, game:HttpGet(url)) end
+    return (getcustomasset or getsynasset)(fileName)
+end
+
+local function spawnEntity(url)
+    pcall(function()
+        loadstring(game:HttpGet(url))()
+    end)
+end
+
+--====================================================--
+-- [1] NẠP SCRIPT RUSH TỰ ĐỘNG
+--====================================================--
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/R%C3%BAh"))()
+    end)
+end)
+
+--====================================================--
+-- [2] PURPLE GUIDING LIGHT & DEATH UI
+--====================================================--
+_G.DO_RED_GUY = true 
+Camera.ChildAdded:Connect(function(Child)
+    if Child.Name ~= "DeathBackgroundBlue" or not _G.DO_RED_GUY then return end
+    pcall(function()
+        local DeathUI = Player.PlayerGui.MainUI.Death
+        DeathUI.HelpfulDialogue.TextColor3 = Color3.fromRGB(160, 32, 240)
+        
+        local CustomMusic = Instance.new("Sound")
+        CustomMusic.SoundId = getGitSoundId("https://github.com/vuivuiviu2/Deliria-Mode-Entity-/raw/refs/heads/main/Okentz%20Phonk%20.mp3", "PurpleTensionV2noo")
+        CustomMusic.Parent = SoundService
+        CustomMusic.Volume = 2.5
+        CustomMusic:Play()
+    end)
+end)
+
+--====================================================--
+-- [3] LOGIC TỈ LỆ - CHẾ ĐỘ ẨN DANH (GHOST LOG)
+--====================================================--
+LatestRoom.Changed:Connect(function()
+    local rates = {70, 45, 35, 36, 75, 25} -- A-60, HTv3, Pinkie, HTv2, Boss, Chain
+    local urls = {
+        "https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/60",
+        "https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Huy%20Tr%E1%BA%A7n%20ng%E1%BB%A7%20ngu%20ch%E1%BA%BFt%20m%E1%BA%B9%20h%E1%BA%BFt%20ngu",
+        "https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/Pinkie",
+        "https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Huy%20Tr%E1%BA%A7n%20CLM",
+        "https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/NTZrise",
+        "https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/NTzchain"
+    }
+
+    local debugLine = "NTz: "
+    for i, rate in ipairs(rates) do
+        local roll = rng:NextInteger(1, rate)
+        debugLine = debugLine .. "[" .. roll .. "/" .. rate .. "] "
+        
+        if roll == 1 then
+            spawnEntity(urls[i])
+        end
+    end
+    print(debugLine) -- Chỉ hiện số, không hiện tên!
+end)
+
+--====================================================--
+-- [4] CÁC THỰC THỂ ĐỢI THỜI GIAN
+--====================================================--
+
+-- NTzv2 (150s)
+task.spawn(function()
+    task.wait(150)
+    LatestRoom.Changed:Wait()
+    spawnEntity("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Ntzv2")
+end)
+
+-- Boss NTz R1se (444s)
+task.spawn(function()
+    task.wait(444)
+    LatestRoom.Changed:Wait() 
+    spawnEntity("https://raw.githubusercontent.com/vuivuiviu2/NTZ/refs/heads/main/NTZrise")
+end)
+
+-- Huy Trần v1 (Loop 40s)
+task.spawn(function()
+    while true do 
+        task.wait(40) 
+        spawnEntity("https://raw.githubusercontent.com/vuivuiviu2/NTzR1SE-Script-/refs/heads/main/Huy%20Tr%E1%BA%A7n%20shocker") 
+    end
+end)
+
+print("✅ NIGHTMARE MODE V1.3")
